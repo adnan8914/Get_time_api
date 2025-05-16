@@ -11,5 +11,5 @@ def home():
 def get_time():
     now = datetime.utcnow()
     return jsonify({
-        "current_time": now.strftime("%Y-%m-%d %H:%M:%S UTC")
+        "message": f"Today is {now.strftime('%A')}, and the current time is {now.strftime('%H:%M:%S UTC')}"
     })
