@@ -1,27 +1,27 @@
 from flask import Flask, jsonify
-from datetime import datetime
-import pytz
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET"])
-def index():
-    return "Flask is running"
+@app.route('/')
+def home():
+    return "Hello, Flask is running!"
 
-@app.route("/check-enrollment", methods=["GET"])
-def check_enrollment():
-    # Get current time in IST
-    ist = pytz.timezone('Asia/Kolkata')
-    current_time = datetime.now(ist).time()
+@app.route('/current_time', methods=['GET'])
+def current_time():
+    now_utc = datetime.utcnow()
+    ist_offset = timedelta(hours=5, minutes=30)
+    now_ist = now_utc + ist_offset
 
-    start_time = datetime.strptime("10:00", "%H:%M").time()
-    end_time = datetime.strptime("17:00", "%H:%M").time()
+    current_day = now_ist.strftime('%A')
+    current_hour = now_ist.strftime('%H:%M:%S')  # Get current time in HH:MM:SS format
+    current_date = now_ist.strftime('%Y-%m-%d')  # Get current date in YYYY-MM-DD format
 
-    # Check if current time is within range
-    if start_time <= current_time <= end_time:
-        return jsonify({"enrollment_open": True, "message": "Yes, it's time for enrollment."})
-    else:
-        return jsonify({"enrollment_open": False, "message": "No, enrollment is closed now."})
+    return jsonify({
+        "Current_Date": current_date,
+        "Current_Time": current_hour,
+        "Current_Day": current_day
+    })
 
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
